@@ -13,8 +13,9 @@ def chat(
     chat_service: ChatService = Depends(get_chat_service)
 ):
 
-    response = chat_service.ask(request.message)
+    response, session_id = chat_service.ask(request.message, request.session_id)
 
     return ChatResponse(
-        response=response
+        response=response,
+        session_id=session_id
     )

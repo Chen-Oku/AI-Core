@@ -1,8 +1,11 @@
-from app.memory.conversation_memory import ConversationMemory
+from app.memory.database import init_db
+from app.memory.session_manager import SessionManager
 
-conversation_memory = ConversationMemory()
+init_db()
+
+session_manager = SessionManager()
 
 
-def get_memory():
+def get_session_manager():
 
-    return conversation_memory
+    return session_manager

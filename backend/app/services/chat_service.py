@@ -1,4 +1,4 @@
-from app.memory.conversation_memory import ConversationMemory
+from app.memory.session_manager import SessionManager
 
 
 class ChatService:
@@ -11,7 +11,7 @@ class ChatService:
 
         prompt_builder,
 
-        memory: ConversationMemory
+        session_manager: SessionManager
 
     ):
 
@@ -19,18 +19,20 @@ class ChatService:
 
         self.prompt_builder = prompt_builder
 
-        self.memory = memory
+        self.session_manager = session_manager
 
-    def ask(self, message: str) -> str:
+    def ask(self, message: str, session_id: str | None) -> tuple[str, str]:
 
-        conversation = self.memory.get_messages()
+        session_id, memory = self.session_manager.get_or_create(session_id)
+
+        conversation = memory.get_messages()
 
         prompt = self.prompt_builder.build(conversation, message)
 
         response = self.provider.generate(prompt)
 
-        self.memory.add_user_message(message)
+        memory.add_user_message(message)
 
-        self.memory.add_assistant_message(response)
+        memory.add_assistant_message(response)
 
-        return response
+        return response, session_id
