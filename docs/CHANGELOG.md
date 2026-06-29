@@ -1,6 +1,7 @@
 # Changelog
 
 ## Unreleased
+- Add Image Generation: `ImageProvider` interface, `Automatic1111ImageProvider` (calls a local AUTOMATIC1111 Stable Diffusion WebUI's `txt2img` API via `httpx`), `ImageService`; new `POST /images/generate` endpoint returning a base64-encoded PNG (ADR-007). Add `AUTOMATIC1111_BASE_URL` to config/`.env.example`
 - Add Agents + Tool Calling: `Tool`/`ToolCallingProvider` interfaces, `OllamaProvider.chat()`, `AgentService` (ReAct-style tool loop with a `MAX_ITERATIONS` safety bound), `rag_search`/`current_datetime` tools, new `POST /agent` endpoint (ADR-006)
 - Add RAG pipeline: `EmbeddingProvider`/`VectorStore` interfaces, `OllamaEmbeddingProvider`, `ChromaVectorStore`, `RagService` (`ingest`/`retrieve`); new `POST /documents` and `POST /rag/query` endpoints (ADR-005)
 - Integrate RAG into `/chat` as opt-in: `ChatRequest.use_rag` (default `False`); `ChatService.ask()` retrieves context via `RagService` and `PromptBuilder` injects it into the prompt when enabled

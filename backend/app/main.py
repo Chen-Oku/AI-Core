@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 from app.api.agent_router import router as agent_router
 from app.api.chat_router import router as chat_router
+from app.api.image_router import router as image_router
 from app.api.rag_router import router as rag_router
 
 app = FastAPI(
@@ -13,6 +14,7 @@ app = FastAPI(
 app.include_router(chat_router)
 app.include_router(rag_router)
 app.include_router(agent_router)
+app.include_router(image_router)
 
 
 @app.get("/")
