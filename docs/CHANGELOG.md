@@ -1,6 +1,15 @@
 # Changelog
 
 ## Unreleased
+- Add Agents + Tool Calling: `Tool`/`ToolCallingProvider` interfaces, `OllamaProvider.chat()`, `AgentService` (ReAct-style tool loop with a `MAX_ITERATIONS` safety bound), `rag_search`/`current_datetime` tools, new `POST /agent` endpoint (ADR-006)
+- Add RAG pipeline: `EmbeddingProvider`/`VectorStore` interfaces, `OllamaEmbeddingProvider`, `ChromaVectorStore`, `RagService` (`ingest`/`retrieve`); new `POST /documents` and `POST /rag/query` endpoints (ADR-005)
+- Integrate RAG into `/chat` as opt-in: `ChatRequest.use_rag` (default `False`); `ChatService.ask()` retrieves context via `RagService` and `PromptBuilder` injects it into the prompt when enabled
+- Add `chroma` service to `docker/docker-compose.yml` (Chroma server, port 8000); add `CHROMA_HOST`/`CHROMA_PORT`/`EMBEDDING_MODEL` to config/`.env.example`
+- Migrate conversation persistence from raw `sqlite3` to SQLAlchemy + PostgreSQL (`SqlAlchemyConversationMemory`, `app/memory/models.py`, `app/memory/db.py`) behind the same `ConversationMemory` interface; no change to `ChatService`/`/chat` (ADR-004)
+- Add `app/core/config.py` (`pydantic-settings`) for `DATABASE_URL`; add `docker/docker-compose.yml` for local PostgreSQL
+- Remove `SqliteConversationMemory`/`database.py` (superseded)
+
+## v0.2.0
 - Add per-session, SQLite-persisted conversation memory (`SqliteConversationMemory`, `SessionManager`) behind a `ConversationMemory` interface; `/chat` now accepts/returns `session_id` (ADR-003)
 - Remove in-process `ConversationMemory` (superseded by the persisted version)
 

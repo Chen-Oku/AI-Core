@@ -3,7 +3,8 @@ class PromptBuilder:
     def build(
         self,
         conversation,
-        message
+        message,
+        context: list[str] | None = None
     ):
 
         system_prompt = """
@@ -15,6 +16,15 @@ Be concise.
 """
 
         prompt = system_prompt + "\n\n"
+
+        if context:
+
+            prompt += "Relevant context:\n"
+
+            for chunk in context:
+                prompt += f"- {chunk}\n"
+
+            prompt += "\n"
 
         for msg in conversation:
 

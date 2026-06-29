@@ -1,10 +1,41 @@
+# Python
 __pycache__/
-*.pyc
-.env
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
 .venv/
+venv/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Frontend (React, once it exists)
+node_modules/
+frontend/dist/
+frontend/build/
+
+# Local runtime data (not part of the project architecture)
+backend/data/
+*.db
+*.sqlite3
+.chroma/
+
+# IDE
 .vscode/
 .idea/
-.pytest_cache/
+*.swp
+
+# OS
 .DS_Store
 Thumbs.db
-backend/data/
+Desktop.ini
+
+# Logs
+*.log

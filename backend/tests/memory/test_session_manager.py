@@ -1,12 +1,19 @@
-from app.memory.database import init_db
+from app.memory.db import create_db_engine, create_session_factory, init_db
 from app.memory.session_manager import SessionManager
+
+
+def _make_manager(tmp_path):
+
+    engine = create_db_engine(f"sqlite:///{tmp_path / 'conversations.db'}")
+    init_db(engine)
+    db = create_session_factory(engine)()
+
+    return SessionManager(db)
 
 
 def test_get_or_create_generates_a_new_id_each_time(tmp_path):
 
-    db_path = tmp_path / "conversations.db"
-    init_db(db_path)
-    manager = SessionManager(db_path)
+    manager = _make_manager(tmp_path)
 
     first_id, _ = manager.get_or_create(None)
     second_id, _ = manager.get_or_create(None)
@@ -16,9 +23,7 @@ def test_get_or_create_generates_a_new_id_each_time(tmp_path):
 
 def test_get_or_create_reuses_a_given_session_id(tmp_path):
 
-    db_path = tmp_path / "conversations.db"
-    init_db(db_path)
-    manager = SessionManager(db_path)
+    manager = _make_manager(tmp_path)
 
     session_id, memory = manager.get_or_create("existing-session")
     memory.add_user_message("hello")
