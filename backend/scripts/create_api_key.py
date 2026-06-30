@@ -7,6 +7,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from app.auth.models import ApiKey
+from app.core import db_models  # noqa: F401 -- registers every ORM model with Base.metadata before init_db() runs
 from app.core.config import settings
 from app.memory.db import create_db_engine, create_session_factory, init_db
 
