@@ -1,7 +1,9 @@
 # TODO
 
-- Alembic migrations (once the schema needs to change)
-- Chunking strategy for long documents ingested into RAG (currently stored as a single chunk)
+- Alembic migrations (once the schema needs to change) — now more pressing, since `messages`/`api_keys` schemas changed in ADR-009; an existing local Postgres DB needs to be dropped/recreated to pick them up
 - Image generation parameters beyond `prompt` (negative prompt, size, steps, sampler, seed)
 - `ImageGenerationTool` to let the Agent generate images mid-conversation (deferred from ADR-007, same shape as `RagSearchTool`)
 - Audio (STT/TTS)
+- Semantic/sentence-aware chunking and cross-chunk re-ranking at retrieval time (deferred from ADR-008)
+- API key rotation/revocation (an endpoint or script to deactivate a key, list a tenant's keys) — only creation exists today (ADR-009)
+- Rate limiting / usage metering per tenant (ADR-009)

@@ -10,12 +10,13 @@ class RagSearchTool:
         "required": ["query"],
     }
 
-    def __init__(self, rag_service):
+    def __init__(self, rag_service, tenant: str):
 
         self.rag_service = rag_service
+        self.tenant = tenant
 
     def run(self, query: str) -> str:
 
-        chunks = self.rag_service.retrieve(query)
+        chunks = self.rag_service.retrieve(query, self.tenant)
 
         return "\n".join(chunks) if chunks else "No relevant information found."

@@ -27,7 +27,9 @@ class FakeSessionManager:
 
         self.memory = FakeMemory()
 
-    def get_or_create(self, session_id):
+    def get_or_create(self, session_id, tenant):
+
+        self.tenant = tenant
 
         return session_id or "new-session", self.memory
 
@@ -68,7 +70,7 @@ def test_ask_returns_the_final_answer_when_no_tool_is_called():
     provider = FakeProvider([ProviderMessage(content="hi there", tool_calls=[])])
     service = AgentService(provider, [FakeTool()], FakeSessionManager())
 
-    response, session_id = service.ask("hello", "session-a")
+    response, session_id = service.ask("hello", "session-a", "tenant-a")
 
     assert response == "hi there"
     assert session_id == "session-a"
@@ -83,7 +85,7 @@ def test_ask_executes_a_tool_call_and_feeds_the_result_back():
     ])
     service = AgentService(provider, [tool], FakeSessionManager())
 
-    response, _ = service.ask("say hello", None)
+    response, _ = service.ask("say hello", None, "tenant-a")
 
     assert response == "final answer"
     assert tool.calls == ["hello"]
@@ -99,7 +101,7 @@ def test_ask_stops_after_max_iterations_of_repeated_tool_calls():
     provider = FakeProvider([always_calls_tool] * 5)
     service = AgentService(provider, [tool], FakeSessionManager())
 
-    response, _ = service.ask("loop forever", None)
+    response, _ = service.ask("loop forever", None, "tenant-a")
 
     assert "Could not complete" in response
     assert len(provider.calls) == 5
@@ -111,7 +113,7 @@ def test_ask_persists_user_and_assistant_messages():
     provider = FakeProvider([ProviderMessage(content="answer", tool_calls=[])])
     service = AgentService(provider, [], session_manager)
 
-    service.ask("question", "session-a")
+    service.ask("question", "session-a", "tenant-a")
 
     assert session_manager.memory.messages == [
         {"role": "user", "content": "question"},

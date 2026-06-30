@@ -10,6 +10,8 @@ class Settings(BaseSettings):
     chroma_port: int = 8000
     embedding_model: str = "nomic-embed-text"
     automatic1111_base_url: str = "http://127.0.0.1:7860"
+    rag_chunk_size: int = 500
+    rag_chunk_overlap: int = 50
 
 
 settings = Settings()

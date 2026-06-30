@@ -1,25 +1,35 @@
 import uuid
 
+from app.rag.chunker import split_text
+
 
 class RagService:
 
-    def __init__(self, embedding_provider, vector_store):
+    def __init__(self, embedding_provider, vector_store, chunk_size: int = 500, chunk_overlap: int = 50):
 
         self.embedding_provider = embedding_provider
         self.vector_store = vector_store
+        self.chunk_size = chunk_size
+        self.chunk_overlap = chunk_overlap
 
-    def ingest(self, text: str, metadata: dict | None = None) -> str:
+    def ingest(self, text: str, tenant: str, metadata: dict | None = None) -> tuple[str, int]:
 
         document_id = uuid.uuid4().hex
-        embedding = self.embedding_provider.embed(text)
+        chunks = split_text(text, self.chunk_size, self.chunk_overlap)
 
-        self.vector_store.add(document_id, text, embedding, metadata)
+        for index, chunk in enumerate(chunks):
 
-        return document_id
+            chunk_id = uuid.uuid4().hex
+            embedding = self.embedding_provider.embed(chunk)
+            chunk_metadata = {**(metadata or {}), "document_id": document_id, "chunk_index": index, "tenant": tenant}
 
-    def retrieve(self, query: str, top_k: int = 3) -> list[str]:
+            self.vector_store.add(chunk_id, chunk, embedding, chunk_metadata)
+
+        return document_id, len(chunks)
+
+    def retrieve(self, query: str, tenant: str, top_k: int = 3) -> list[str]:
 
         embedding = self.embedding_provider.embed(query)
-        results = self.vector_store.query(embedding, top_k)
+        results = self.vector_store.query(embedding, top_k, where={"tenant": tenant})
 
         return [result["text"] for result in results]

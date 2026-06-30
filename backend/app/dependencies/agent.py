@@ -1,5 +1,6 @@
 from fastapi import Depends
 
+from app.dependencies.auth import get_current_tenant
 from app.dependencies.memory import get_session_manager
 from app.dependencies.provider import get_provider
 from app.dependencies.rag import get_rag_service
@@ -15,8 +16,9 @@ def get_agent_service(
     provider: OllamaProvider = Depends(get_provider),
     rag_service: RagService = Depends(get_rag_service),
     session_manager: SessionManager = Depends(get_session_manager),
+    tenant: str = Depends(get_current_tenant),
 ) -> AgentService:
 
-    tools = [RagSearchTool(rag_service), CurrentDateTimeTool()]
+    tools = [RagSearchTool(rag_service, tenant), CurrentDateTimeTool()]
 
     return AgentService(provider=provider, tools=tools, session_manager=session_manager)

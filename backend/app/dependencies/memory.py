@@ -1,6 +1,7 @@
 from fastapi import Depends
 from sqlalchemy.orm import Session
 
+from app.auth.models import ApiKey  # noqa: F401 -- registers ApiKey with Base.metadata before init_db() runs
 from app.core.config import settings
 from app.memory.db import create_db_engine, create_session_factory, init_db
 from app.memory.session_manager import SessionManager

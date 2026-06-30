@@ -9,9 +9,9 @@ class AgentService:
         self.tools = {tool.name: tool for tool in tools}
         self.session_manager = session_manager
 
-    def ask(self, message: str, session_id: str | None) -> tuple[str, str]:
+    def ask(self, message: str, session_id: str | None, tenant: str) -> tuple[str, str]:
 
-        session_id, memory = self.session_manager.get_or_create(session_id)
+        session_id, memory = self.session_manager.get_or_create(session_id, tenant)
 
         messages = [{"role": m["role"], "content": m["content"]} for m in memory.get_messages()]
         messages.append({"role": "user", "content": message})

@@ -14,11 +14,11 @@ def test_messages_persist_across_instances(tmp_path):
 
     session_factory = _make_session_factory(tmp_path)
 
-    first = SqlAlchemyConversationMemory(session_factory(), "session-a")
+    first = SqlAlchemyConversationMemory(session_factory(), "session-a", "tenant-a")
     first.add_user_message("hello")
     first.add_assistant_message("hi there")
 
-    second = SqlAlchemyConversationMemory(session_factory(), "session-a")
+    second = SqlAlchemyConversationMemory(session_factory(), "session-a", "tenant-a")
 
     assert second.get_messages() == [
         {"role": "user", "content": "hello"},
@@ -30,10 +30,23 @@ def test_sessions_are_isolated(tmp_path):
 
     session_factory = _make_session_factory(tmp_path)
 
-    session_a = SqlAlchemyConversationMemory(session_factory(), "session-a")
-    session_b = SqlAlchemyConversationMemory(session_factory(), "session-b")
+    session_a = SqlAlchemyConversationMemory(session_factory(), "session-a", "tenant-a")
+    session_b = SqlAlchemyConversationMemory(session_factory(), "session-b", "tenant-a")
 
     session_a.add_user_message("only in a")
 
     assert session_a.get_messages() == [{"role": "user", "content": "only in a"}]
     assert session_b.get_messages() == []
+
+
+def test_tenants_are_isolated_even_with_the_same_session_id(tmp_path):
+
+    session_factory = _make_session_factory(tmp_path)
+
+    tenant_a = SqlAlchemyConversationMemory(session_factory(), "shared-session", "tenant-a")
+    tenant_b = SqlAlchemyConversationMemory(session_factory(), "shared-session", "tenant-b")
+
+    tenant_a.add_user_message("only tenant a should see this")
+
+    assert tenant_a.get_messages() == [{"role": "user", "content": "only tenant a should see this"}]
+    assert tenant_b.get_messages() == []

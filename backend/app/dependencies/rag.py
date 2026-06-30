@@ -25,4 +25,9 @@ def get_rag_service(
     vector_store: ChromaVectorStore = Depends(get_vector_store),
 ) -> RagService:
 
-    return RagService(embedding_provider=embedding_provider, vector_store=vector_store)
+    return RagService(
+        embedding_provider=embedding_provider,
+        vector_store=vector_store,
+        chunk_size=settings.rag_chunk_size,
+        chunk_overlap=settings.rag_chunk_overlap,
+    )

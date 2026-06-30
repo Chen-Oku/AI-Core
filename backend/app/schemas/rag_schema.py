@@ -7,7 +7,8 @@ class IngestRequest(BaseModel):
 
 
 class IngestResponse(BaseModel):
-    id: str
+    document_id: str
+    chunk_count: int
 
 
 class RetrieveRequest(BaseModel):

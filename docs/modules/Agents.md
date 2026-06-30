@@ -13,8 +13,9 @@ Let the LLM decide, mid-conversation, to invoke a tool (e.g. search the knowledg
 - `app/interfaces/tool.py` — `Tool` Protocol that `AgentService` depends on.
 - `app/interfaces/tool_calling_provider.py` — `ToolCallingProvider` Protocol, `ProviderMessage`/`ToolCall` dataclasses.
 - `app/providers/ollama_provider.py` — `OllamaProvider.chat()` implements `ToolCallingProvider` against Ollama's native tool calling (model `qwen3:latest`).
-- `app/tools/rag_search_tool.py` (depends on `RagService`, ADR-005) and `app/tools/current_datetime_tool.py` — the two MVP tools.
-- `app/memory/session_manager.py` — reused as-is for conversation persistence.
+- `app/tools/rag_search_tool.py` (depends on `RagService`, ADR-005, and a tenant for scoping, ADR-009) and `app/tools/current_datetime_tool.py` — the two MVP tools.
+- `app/memory/session_manager.py` — reused as-is for conversation persistence, now tenant-scoped (ADR-009).
+- `app/dependencies/auth.py` (`get_current_tenant`) — `AgentService.ask()` requires a `tenant`, and `RagSearchTool` is constructed per-request with the same tenant baked in.
 - Wired via `app/dependencies/agent.py` (`get_agent_service`).
 
 ## Tests

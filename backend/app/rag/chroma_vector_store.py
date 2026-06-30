@@ -16,9 +16,9 @@ class ChromaVectorStore:
             metadatas=[metadata],
         )
 
-    def query(self, embedding: list[float], top_k: int) -> list[dict]:
+    def query(self, embedding: list[float], top_k: int, where: dict | None = None) -> list[dict]:
 
-        results = self.collection.query(query_embeddings=[embedding], n_results=top_k)
+        results = self.collection.query(query_embeddings=[embedding], n_results=top_k, where=where)
 
         documents = results["documents"][0]
         metadatas = results["metadatas"][0]
