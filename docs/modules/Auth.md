@@ -11,14 +11,15 @@ Identify which tenant (consumer app) is calling AI Core, via a per-tenant API ke
 
 ## Dependencies
 - `app/interfaces/api_key_repository.py` — `ApiKeyRepository` Protocol that `AuthService` depends on.
-- `app/core/db_base.py` — shared SQLAlchemy `Base`, also used by `app/memory/models.py`, so `api_keys` and `messages` live in the same schema/`init_db()` call.
+- `app/core/db_base.py` — shared SQLAlchemy `Base`, also used by `app/memory/models.py`, so `api_keys` and `messages` live in the same schema, managed together by Alembic (ADR-010).
 - Wired via `app/dependencies/auth.py` (`get_api_key_repository`, `get_auth_service`, `get_current_tenant`); `get_current_tenant` is a dependency on every router (`chat_router`, `agent_router`, `rag_router`, `image_router`).
 - `app/dependencies/agent.py` also depends on `get_current_tenant` directly, to construct a tenant-scoped `RagSearchTool` per request (FastAPI caches the dependency result per request, so it isn't re-evaluated).
 
 ## Provisioning
-No API endpoint creates keys (there's no authenticated way to call one before a key exists, and `Users`/`Organizations` aren't built yet). Use the CLI script instead:
+No API endpoint creates keys (there's no authenticated way to call one before a key exists, and `Users`/`Organizations` aren't built yet). Run migrations first, then use the CLI script:
 
 ```bash
+alembic upgrade head
 python scripts/create_api_key.py <tenant-name>
 ```
 

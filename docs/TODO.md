@@ -1,6 +1,5 @@
 # TODO
 
-- Alembic migrations (once the schema needs to change) — now more pressing, since `messages`/`api_keys` schemas changed in ADR-009; an existing local Postgres DB needs to be dropped/recreated to pick them up
 - Image generation parameters beyond `prompt` (negative prompt, size, steps, sampler, seed)
 - `ImageGenerationTool` to let the Agent generate images mid-conversation (deferred from ADR-007, same shape as `RagSearchTool`)
 - Audio (STT/TTS)

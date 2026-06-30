@@ -16,6 +16,9 @@ Persist conversation history per session so chats survive a server restart.
 - Wired via `app/dependencies/memory.py` (`get_db`, `get_session_manager`); `get_db` yields one `Session` per request.
 - Local PostgreSQL for development: `docker/docker-compose.yml`.
 
+## Schema migrations
+Schema is managed by Alembic (`backend/alembic/`, ADR-010), not by the app at startup. Run `alembic upgrade head` before starting the app or provisioning an API key. Tests are the one exception: they call `app/memory/db.py:init_db()` (`create_all()`) directly against a temporary SQLite file, bypassing Alembic.
+
 ## Tenant isolation
 `Message` rows carry a `tenant` column. `SessionManager.get_or_create(session_id, tenant)` and `SqlAlchemyConversationMemory(db, session_id, tenant)` both require it, and every read/write filters on `(session_id, tenant)`. A tenant supplying another tenant's `session_id` simply sees an empty conversation rather than an error. See ADR-009.
 
